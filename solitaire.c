@@ -1,20 +1,10 @@
-#include <stdio.h>
-
 #include "raylib.h"
+#include "solitaire.h"
+
+Card cards[104];
 
 void DrawCard(Texture2D texture, int row, int col, int tile_w, int tile_h, Vector2 pos)
 {
-    /*if (row < 0 || row > 4)
-    {
-        printf("Row can only be from 0 to 4\n");
-        return;
-    }
-    if (col < 0 || col > 12)
-    {
-        printf("Column can only be from 0 to 13\n");
-        return;
-    }*/
-
     Rectangle src = {
         col * tile_w,
         row * tile_h,
@@ -32,10 +22,28 @@ void DrawCard(Texture2D texture, int row, int col, int tile_w, int tile_h, Vecto
     DrawTexturePro(texture, src, dest_rec, (Vector2){0, 0}, 0,  WHITE);
 }
 
+void init()
+{
+    int i = 0;
+    for (int deck = 0; deck < 2; deck++)
+    {
+        for (int rank = 1; rank <= 13; rank++)
+        {
+            for (int copy = 0; copy < 4; copy++)
+            {
+                cards[i].rank = rank;
+                cards[i].suit = 3;
+                cards[i].face_up = false;
+                i++;
+            }
+        }
+    }
+}
+
 
 int main(void)
 {
-    const int screen_width = 1270;
+    const int screen_width = 1280;
     const int screen_height = 720;
 
     float scale  = 2.0f;
@@ -44,13 +52,15 @@ int main(void)
     float total_width = screen_width;
     float spacing = (total_width - card_w) / 9;
 
-    bool debug = true;
+    bool debug = false;
+
+    Card card = { .rank = 1, .suit = 3, .face_up = false};
 
     InitWindow(screen_width , screen_height, "Spider Solitaire");
-    SetTargetFPS(6);
+    SetTargetFPS(1);
 
     Image tilesheet = LoadImage("cardsLarge_tilemap_packed.png");
-    Texture2D texture = LoadTextureFromImage(tilesheet);      // Image converted to texture, uploaded to GPU memory (VRAM)
+    Texture2D texture = LoadTextureFromImage(tilesheet);
     UnloadImage(tilesheet);
 
     Vector2 card_pos = {0, 10};
@@ -68,7 +78,13 @@ int main(void)
         BeginDrawing();
             ClearBackground(DARKGREEN);
 
-            for (int i = 0; i < 10; i++)
+            init();
+
+            for (int i = 0; i < 104; i++)
+            {
+                printf("Card No. %d = %d\n", i, cards[i].rank);
+            }
+            /*for (int i = 0; i < 10; i++)
             {
                 Vector2 draw_pos = {
                     card_pos.x + spacing * i,
@@ -76,7 +92,7 @@ int main(void)
                 };
 
                 DrawCard(texture, 3, i, 64, 64, draw_pos);
-            }
+            }*/
 
         EndDrawing();
     }
